@@ -140,7 +140,7 @@ function lift(x::Matrix, levels::Integer)::Matrix
 end
 
 function normalize_img(img::Matrix, gamma::Float64)::Matrix
-    return (img./maximum(img)).^gamma
+    return (img./maximum(img)).^gamma # bo zakres wartosci 0-1
     # tutaj zakldam ze przekazuje wartosc bezwzgledna abs.(img)
     # gamma < 1 rozjasnienie
     # gamma > 1 przyciemnienie
@@ -150,8 +150,8 @@ end
     # 0.5 -> szary
     # 1.0 -> biały
 
-function get_subbands(X::Matrix, levels::Integer, dir::String, gamma::Float64)
-    R, C = size(X)
+function get_subbands(X_r::Matrix, X_g::Matrix, X_b::Matrix, levels::Integer, dir::String, gamma::Float64)
+    R, C = size(X_r)
     # wielkosc obrazu reprezentuje sie:
     # szerokosc x wysokosc
     # kolumny x wiersze
@@ -163,11 +163,24 @@ function get_subbands(X::Matrix, levels::Integer, dir::String, gamma::Float64)
     half_size_R = Int(size_R / 2)
     half_size_C = Int(size_C / 2)
 
-    # cut subbands
-    LL = X[1:half_size_R, 1:half_size_C]
-    LH = X[1:half_size_R, (half_size_C + 1):size_C]
-    HL = X[(half_size_R + 1):size_R, 1:half_size_C]
-    HH = X[(half_size_R + 1):size_R, half_size_C:size_C]
+    # Cut subbands dla każdego kanału
+    # RED
+    LL_r = X_r[1:half_size_R, 1:half_size_C]
+    LH_r = X_r[1:half_size_R, (half_size_C + 1):size_C]
+    HL_r = X_r[(half_size_R + 1):size_R, 1:half_size_C]
+    HH_r = X_r[(half_size_R + 1):size_R, half_size_C:size_C]
+    
+    # GREEN
+    LL_g = X_g[1:half_size_R, 1:half_size_C]
+    LH_g = X_g[1:half_size_R, (half_size_C + 1):size_C]
+    HL_g = X_g[(half_size_R + 1):size_R, 1:half_size_C]
+    HH_g = X_g[(half_size_R + 1):size_R, half_size_C:size_C]
+    
+    # BLUE
+    LL_b = X_b[1:half_size_R, 1:half_size_C]
+    LH_b = X_b[1:half_size_R, (half_size_C + 1):size_C]
+    HL_b = X_b[(half_size_R + 1):size_R, 1:half_size_C]
+    HH_b = X_b[(half_size_R + 1):size_R, half_size_C:size_C]
 
     # Macierz DWT
     # ┌────┬────┬─────────┐
@@ -178,18 +191,31 @@ function get_subbands(X::Matrix, levels::Integer, dir::String, gamma::Float64)
     # │   HL₁   │   HH₁   │  
     # └─────────┴─────────┘
 
-    # Save 
-    save(joinpath(dir, "dwt_level$(levels)_LL.png"), Gray.(normalize_img(abs.(LL), gamma)))
-    save(joinpath(dir, "dwt_level$(levels)_LH.png"), Gray.(normalize_img(abs.(LH), gamma)))
-    save(joinpath(dir, "dwt_level$(levels)_HL.png"), Gray.(normalize_img(abs.(HL), gamma)))
-    save(joinpath(dir, "dwt_level$(levels)_HH.png"), Gray.(normalize_img(abs.(HH), gamma)))
+    # Save RGB subbands
+    save(joinpath(dir, "dwt_level$(levels)_LL_rgb.png"), 
+         colorview(RGB, normalize_img(abs.(LL_r), gamma), 
+                       normalize_img(abs.(LL_g), gamma),
+                       normalize_img(abs.(LL_b), gamma)))
+    
+    save(joinpath(dir, "dwt_level$(levels)_LH_rgb.png"), 
+         colorview(RGB, normalize_img(abs.(LH_r), gamma),
+                       normalize_img(abs.(LH_g), gamma),
+                       normalize_img(abs.(LH_b), gamma)))
+    
+    save(joinpath(dir, "dwt_level$(levels)_HL_rgb.png"), 
+         colorview(RGB, normalize_img(abs.(HL_r), gamma),
+                       normalize_img(abs.(HL_g), gamma),
+                       normalize_img(abs.(HL_b), gamma)))
+    
+    save(joinpath(dir, "dwt_level$(levels)_HH_rgb.png"), 
+         colorview(RGB, normalize_img(abs.(HH_r), gamma),
+                       normalize_img(abs.(HH_g), gamma),
+                       normalize_img(abs.(HH_b), gamma)))
 
-    # Statistics (Min, Max)
-    println(" ")
-    println("=== Subbands statistics ===")
-    println("LL: min=$(minimum(LL)), max=$(maximum(LL))")
-    println("LH: min=$(minimum(LH)), max=$(maximum(LH))")
-    println("HL: min=$(minimum(HL)), max=$(maximum(HL))")
-    println("HH: min=$(minimum(HH)), max=$(maximum(HH))")
+    # Statistics
+    println("\n=== RGB Subbands statistics ===")
+    println("RED - LL: min=$(minimum(LL_r)), max=$(maximum(LL_r))")
+    println("GREEN - LL: min=$(minimum(LL_g)), max=$(maximum(LL_g))")
+    println("BLUE - LL: min=$(minimum(LL_b)), max=$(maximum(LL_b))")
 end
 
