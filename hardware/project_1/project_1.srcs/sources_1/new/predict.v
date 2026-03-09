@@ -22,29 +22,35 @@
 
 module predict #(
     parameter DATA_LEN = 16,
-    parameter NULL = 255
+    parameter NULL = 16'd0
 )(
     input clk,
     input reset,
     
     input [DATA_LEN-1:0] data_in,
     
+    // for predict
     input wire first_last_odd,
     input wire last_even_minus_one,
     input wire data_valid,
     
+    // for predict
     output reg [DATA_LEN-1:0] predict_detail,
     output reg done
     );
     
+    // for predict
     reg signed [DATA_LEN-1:0] even_prev;
     reg signed [DATA_LEN-1:0] odd;
     reg signed [DATA_LEN-1:0] even_next;
     
-    reg signed [DATA_LEN-1:0] sync_prev;
-    reg signed [DATA_LEN-1:0] sync_odd;
-    reg signed [DATA_LEN-1:0] sync_next;
-    
+// =============== DEBUG ==================
+//    reg signed [DATA_LEN-1:0] sync_prev;
+//    reg signed [DATA_LEN-1:0] sync_odd;
+//    reg signed [DATA_LEN-1:0] sync_next;
+// ========================================
+
+    // for predict
     reg initialized = 0;
     reg first_last_odd_buff = 0;
     
@@ -57,14 +63,19 @@ module predict #(
     reg [2:0] state = IDLE;
     
     always @(posedge clk or posedge reset) begin
-        
         if(reset) begin
-            even_prev <= 16'd255;
-            odd <= 16'd255;
-            even_next <= 16'd255;
-            predict_detail <= 16'd255;
+            even_prev <= NULL;
+            odd <= NULL;
+            even_next <= NULL;
+            predict_detail <= NULL;
+            
+//            sync_prev <= NULL;
+//            sync_odd <= NULL;
+//            sync_next <= NULL;
+            
             initialized <= 0;
             first_last_odd_buff <= 0;
+            
             done <= 0;
             
             state <= IDLE;
@@ -97,12 +108,11 @@ module predict #(
                         if(~initialized) begin
                             even_next <= data_in;
                             
-                            sync_prev <= even_prev; 
-                            sync_odd  <= odd;       
-                            sync_next <= data_in;
-                            
+//                            sync_prev <= even_prev; 
+//                            sync_odd  <= odd;       
+//                            sync_next <= data_in;
+
                             initialized <= 1;
-                            
                             if(first_last_odd_buff) begin
                                 predict_detail <= odd - even_prev; 
                             end 
@@ -111,16 +121,15 @@ module predict #(
                             even_prev <= even_next; 
                             even_next <= data_in;
                             
-                            sync_prev <= even_next; 
-                            sync_odd  <= odd;       
-                            sync_next <= data_in;
+//                            sync_prev <= even_next; 
+//                            sync_odd  <= odd;       
+//                            sync_next <= data_in;
                             
                             if(first_last_odd) begin
                                 predict_detail <= odd - even_next; 
                             end else begin
                                 predict_detail <= odd - ((even_next + data_in) >>> 1);
                             end
-                        
                         end
                         
                         done <= 1;

@@ -19,13 +19,12 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
 module predict_tb(
 
     );
     localparam DATA_LEN = 16;
     localparam X_LEN = 8;
-    localparam DUMMY_LEN = 1;
+    localparam DUMMY_LEN = 1; // MCU must send 1 empty sample at the end
     
     reg clk;
     reg reset;
@@ -61,17 +60,16 @@ module predict_tb(
     end
         
     for (i = 0; i < DUMMY_LEN; i = i + 1) begin
-        dummy[i] = 16'd255;
+        dummy[i] = 16'd0; // empty dummy
     end
 
         clk = 0;
         reset = 1;
         data_in = 16'd255;
         
-        #10 reset = 0; // Puszczamy reset po 20ns
-        @(posedge clk); // Czekamy na zbocze narastające
+        #10 reset = 0;
+        @(posedge clk);
 
-        // Wprowadzanie 6 elementów do potoku
         data_valid <= 1;
         for (i = 0; i < X_LEN; i = i + 1) begin
             if(i == 1) begin
@@ -94,12 +92,11 @@ module predict_tb(
         
         
         for(i = 0; i < DUMMY_LEN; i = i + 1) begin
-            data_in <= dummy[i];
+            data_in <= dummy[i]; // sending dummy
             @(posedge clk);
         end
         data_valid <= 0;
         
-        // Po podaniu danych zerujemy wejście i czekamy na ostatni wynik
         data_in <= 16'd255;
         repeat(3) @(posedge clk); 
     end
