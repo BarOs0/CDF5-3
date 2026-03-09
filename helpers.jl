@@ -50,6 +50,8 @@ function dwt(x::Vector)::Vector
     even = x[1:2:end] # approx
     odd = x[2:2:end] # detail
 
+    [E1, O, E2]
+
     # === Predict === 
     for i in 1:length(odd)
         if i == 1
@@ -57,7 +59,7 @@ function dwt(x::Vector)::Vector
         elseif i <= length(even) - 1
             odd[i] -= (even[i] + even[i+1]) / 2
         else
-            odd[i] -= even[i]  
+            odd[i] -= even[i]
         end
     end
 
