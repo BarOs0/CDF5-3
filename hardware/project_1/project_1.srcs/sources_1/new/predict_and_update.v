@@ -30,29 +30,58 @@ module predict_and_update #(
     input [DATA_LEN-1:0] data_in,
     
     // for predict
-    input wire first_last_odd,
-    input wire last_even_minus_one,
+    input wire first_odd,
+    input wire last_odd,
+    
+    // for update
+    input wire first_even,
+    input wire last_even,
+    
     input wire data_valid,
     
     // for predict
     output reg [DATA_LEN-1:0] predict_detail,
-    output reg predict_done
+    output reg predict_done,
+    
+    // for update
+    output reg [DATA_LEN-1:0] update_approx,
+    output reg update_done
     );
     
     // for predict
     reg signed [DATA_LEN-1:0] even_prev;
     reg signed [DATA_LEN-1:0] odd;
     reg signed [DATA_LEN-1:0] even_next;
+    reg signed [DATA_LEN-1:0] predict_d1;
     
-// =============== DEBUG ==================
-//    reg signed [DATA_LEN-1:0] sync_prev;
-//    reg signed [DATA_LEN-1:0] sync_odd;
-//    reg signed [DATA_LEN-1:0] sync_next;
+// =========== DEBUG PREDICT ==============
+    reg signed [DATA_LEN-1:0] sync_prev;
+    reg signed [DATA_LEN-1:0] sync_odd;
+    reg signed [DATA_LEN-1:0] sync_next;
 // ========================================
 
+
+    // for update
+//    reg signed [DATA_LEN-1:0] odd_prev;
+//    reg signed [DATA_LEN-1:0] even;
+//    reg signed [DATA_LEN-1:0] odd;
+    
+// ============ DEBUG UPDATE ================
+//    reg signed [DATA_LEN-1:0] sync_odd_prev;
+//    reg signed [DATA_LEN-1:0] sync_even;
+//    reg signed [DATA_LEN-1:0] sync_odd;
+// ==========================================
+    
+//    reg [DATA_LEN-1:0] even_d1;
+//    reg [DATA_LEN-1:0] even_d2;
+
     // for predict
-    reg initialized = 0;
-    reg first_last_odd_buff = 0;
+    reg predict_initialized = 0;
+    reg first_odd_d1 = 0;
+    reg predict_done_d1 = 0;
+    
+    // for update
+//    reg update_initialized = 0;
     
     localparam IDLE = 3'd0;
     localparam GET_EVEN_PREV = 3'd1;
@@ -64,21 +93,43 @@ module predict_and_update #(
     
     always @(posedge clk or posedge reset) begin
         if(reset) begin
+        
             even_prev <= NULL;
             odd <= NULL;
             even_next <= NULL;
+            predict_d1 <= NULL;
             predict_detail <= NULL;
             
-//            sync_prev <= NULL;
+//            odd_prev <= NULL;
+//            even <= NULL;
+//            even_d1 <= NULL;
+//            even_d2 <= NULL;
+//            odd <= NULL;
+            update_approx <= NULL;
+
+// =========== DEBUG PREDICT ==============            
+            sync_prev <= NULL;
+            sync_odd <= NULL;
+            sync_next <= NULL;
+// ========================================
+
+// ============ DEBUG UPDATE ================
+//            sync_odd_prev <= NULL;
+//            sync_even <= NULL;
 //            sync_odd <= NULL;
-//            sync_next <= NULL;
+// ==========================================
             
-            initialized <= 0;
-            first_last_odd_buff <= 0;
+            predict_initialized <= 0;
+//            update_initialized <= 0;
+            
+            first_odd_d1 <= 0;
             
             predict_done <= 0;
+            predict_done_d1 <= 0;
+            update_done <= 0;
             
             state <= IDLE;
+            
         end else begin
         
             case(state)
@@ -95,46 +146,66 @@ module predict_and_update #(
                 end
                 
                 GET_ODD: begin
+                    predict_d1 <= predict_detail;
                     if(data_valid) begin
                         odd <= data_in;
                     end
+                    update_done <= 0;
                     predict_done <= 0;
-                    first_last_odd_buff <= first_last_odd;
+                    predict_done_d1 <= predict_done;
+                    first_odd_d1 <= first_odd;
                     state <= GET_EVEN_NEXT;
                 end
                 
                 GET_EVEN_NEXT: begin
                     if(data_valid) begin
-                        if(~initialized) begin
+                        if(~predict_initialized) begin
                             even_next <= data_in;
                             
-//                            sync_prev <= even_prev; 
-//                            sync_odd  <= odd;       
-//                            sync_next <= data_in;
+//                      =========== DEBUG PREDICT ==============                            
+                            sync_prev <= even_prev; 
+                            sync_odd  <= odd;       
+                            sync_next <= data_in;
+//                      ========================================
 
-                            initialized <= 1;
-                            if(first_last_odd_buff) begin
+                            predict_initialized <= 1;
+                            if(first_odd_d1) begin
                                 predict_detail <= odd - even_prev; 
-                            end 
+                            end
                             
                         end else begin
                             even_prev <= even_next; 
                             even_next <= data_in;
                             
-//                            sync_prev <= even_next; 
-//                            sync_odd  <= odd;       
-//                            sync_next <= data_in;
-                            
-                            if(first_last_odd) begin
+//                      =========== DEBUG PREDICT ==============                            
+                            sync_prev <= even_next; 
+                            sync_odd  <= odd;       
+                            sync_next <= data_in;
+//                      ========================================   
+                         
+                            if(last_odd) begin
                                 predict_detail <= odd - even_next; 
                             end else begin
                                 predict_detail <= odd - ((even_next + data_in) >>> 1);
                             end
+                            
                         end
-                        
-                        predict_done <= 1;
                         state <= GET_ODD;
                     end
+                    predict_done <= 1;
+                    
+                    // for update
+                    if(predict_done_d1) begin
+                        if(first_even) begin
+                            update_approx <= even_prev + (predict_detail >>> 1);
+                        end else if(last_odd) begin
+                            update_approx <= even_prev + ((predict_d1 + predict_detail) >>> 2);
+                        end else begin
+                            update_approx <= even_prev + (predict_d1 >>> 1);
+                        end
+                        update_done <= 1;
+                    end
+                    predict_done_d1 <= predict_done;
                 end
                 
                 default: begin

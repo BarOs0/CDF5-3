@@ -24,7 +24,7 @@ function update(odd::Vector, even::Vector)::Vector
     return even
 end
 
-test_size = 8
+test_size = 16
 
 test = zeros(test_size)
 
@@ -32,14 +32,22 @@ test = zeros(test_size)
 #     test[i] = i-1
 # end
 
-test[1] = 0
-test[2] = 1
-test[3] = 2
-test[4] = 3
-test[5] = 4
-test[6] = 5
-test[7] = 6
-test[8] = 7
+test[1] = 3
+test[2] = 11
+test[3] = 4
+test[4] = 6
+test[5] = 5
+test[6] = 1
+test[7] = 3
+test[8] = 8
+test[9] = 13
+test[10] = 7
+test[11] = 15
+test[12] = 2
+test[13] = 8
+test[14] = 2
+test[15] = 10
+test[16] = 5
 
 odd = test[2:2:end]
 even = test[1:2:end]

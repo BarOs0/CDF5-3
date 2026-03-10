@@ -2,8 +2,8 @@
 <GenRun Id="synth_1" LaunchPart="xc7z010clg400-1" LaunchTime="1772617735">
   <File Type="RDS-DCP" Name="design_1_wrapper.dcp"/>
   <File Type="RDS-RDS" Name="design_1_wrapper.vds"/>
-  <File Type="RDS-UTIL" Name="predict_utilization_synth.rpt"/>
-  <File Type="RDS-UTIL-PB" Name="predict_utilization_synth.pb"/>
+  <File Type="RDS-UTIL" Name="predict_and_update_utilization_synth.rpt"/>
+  <File Type="RDS-UTIL-PB" Name="predict_and_update_utilization_synth.pb"/>
   <File Type="PA-TCL" Name="design_1_wrapper.tcl"/>
   <File Type="REPORTS-TCL" Name="design_1_wrapper_reports.tcl"/>
   <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1" RelGenDir="$PGENDIR/sources_1">
