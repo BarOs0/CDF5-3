@@ -29,12 +29,12 @@ module predict_tb(
     reg clk;
     reg reset;
     reg signed [DATA_LEN-1:0] data_in;
-    wire signed [DATA_LEN-1:0] data_out;
-    wire done;
+    wire signed [DATA_LEN-1:0] predict_detail;
+    wire predict_done;
     
     reg signed [DATA_LEN-1:0] x [0:X_LEN-1];
     reg signed [DATA_LEN-1:0] dummy [0:DUMMY_LEN-1];
-    integer i, j;
+    integer i;
     
     reg first_last_odd = 0;
     reg last_even_minus_one = 0;
@@ -47,8 +47,8 @@ module predict_tb(
         .first_last_odd(first_last_odd),
         .last_even_minus_one(last_even_minus_one),
         .data_valid(data_valid),
-        .predict_detail(data_out),
-        .done(done)
+        .predict_detail(predict_detail),
+        .predict_done(predict_done)
     );
     
     always #5 clk = ~clk;
@@ -56,7 +56,8 @@ module predict_tb(
     initial begin
     
     for (i = 0; i < X_LEN; i = i + 1) begin
-        x[i] = $urandom & 16'hFFFF;
+//        x[i] = $urandom & 16'hFFFF;
+          x[i] <= i;
     end
         
     for (i = 0; i < DUMMY_LEN; i = i + 1) begin

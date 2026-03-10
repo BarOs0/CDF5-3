@@ -30,13 +30,14 @@ module predict #(
     input [DATA_LEN-1:0] data_in,
     
     // for predict
-    input wire first_last_odd,
-    input wire last_even_minus_one,
+    input wire first_odd,
+    input wire last_odd,
+    
     input wire data_valid,
     
     // for predict
     output reg [DATA_LEN-1:0] predict_detail,
-    output reg done
+    output reg predict_done
     );
     
     // for predict
@@ -52,7 +53,7 @@ module predict #(
 
     // for predict
     reg initialized = 0;
-    reg first_last_odd_buff = 0;
+    reg first_odd_buff = 0;
     
     localparam IDLE = 3'd0;
     localparam GET_EVEN_PREV = 3'd1;
@@ -74,9 +75,10 @@ module predict #(
 //            sync_next <= NULL;
             
             initialized <= 0;
-            first_last_odd_buff <= 0;
             
-            done <= 0;
+            first_odd_buff <= 0;
+            
+            predict_done <= 0;
             
             state <= IDLE;
         end else begin
@@ -98,8 +100,8 @@ module predict #(
                     if(data_valid) begin
                         odd <= data_in;
                     end
-                    done <= 0;
-                    first_last_odd_buff <= first_last_odd;
+                    predict_done <= 0;
+                    first_odd_buff <= first_odd;
                     state <= GET_EVEN_NEXT;
                 end
                 
@@ -113,7 +115,7 @@ module predict #(
 //                            sync_next <= data_in;
 
                             initialized <= 1;
-                            if(first_last_odd_buff) begin
+                            if(first_odd_buff) begin
                                 predict_detail <= odd - even_prev; 
                             end 
                             
@@ -125,14 +127,14 @@ module predict #(
 //                            sync_odd  <= odd;       
 //                            sync_next <= data_in;
                             
-                            if(first_last_odd) begin
+                            if(last_odd) begin
                                 predict_detail <= odd - even_next; 
                             end else begin
                                 predict_detail <= odd - ((even_next + data_in) >>> 1);
                             end
                         end
                         
-                        done <= 1;
+                        predict_done <= 1;
                         state <= GET_ODD;
                     end
                 end

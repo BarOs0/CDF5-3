@@ -32,14 +32,14 @@ test = zeros(test_size)
 #     test[i] = i-1
 # end
 
-test[1] = -1565
-test[2] = 2315
-test[3] = 7124
-test[4] = 12278
-test[5] = 12741
-test[6] = 25281
-test[7] = -1981
-test[8] = 11176
+test[1] = 0
+test[2] = 1
+test[3] = 2
+test[4] = 3
+test[5] = 4
+test[6] = 5
+test[7] = 6
+test[8] = 7
 
 odd = test[2:2:end]
 even = test[1:2:end]
@@ -48,10 +48,10 @@ println("test: ", test, " {", length(test), "}")
 println("odd: ", odd, " {", length(odd), "}")
 println("even: ", even, " {", length(even), "}")
 println("")
-println("======================= PREDICT =======================")
+println("======================= PREDICT ========================")
 res_predict = predict(odd, even)
 println("result predict: ", res_predict, " {", length(res_predict), "}")
-println("=======================================================")
+println("========================================================")
 println("")
 println("======================== UPDATE ========================")
 res_update = update(res_predict, even)

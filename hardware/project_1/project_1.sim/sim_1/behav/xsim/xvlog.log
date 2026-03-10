@@ -1,4 +1,6 @@
 INFO: [VRFC 10-2263] Analyzing Verilog file "/home/bartek/project_1/project_1.srcs/sources_1/new/predict.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module predict
-INFO: [VRFC 10-2263] Analyzing Verilog file "/home/bartek/project_1/project_1.srcs/sim_1/new/predict_tb.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module predict_tb
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/bartek/project_1/project_1.srcs/sources_1/new/update.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module update
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/bartek/project_1/project_1.srcs/sim_1/new/update_tb.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module update_tb
