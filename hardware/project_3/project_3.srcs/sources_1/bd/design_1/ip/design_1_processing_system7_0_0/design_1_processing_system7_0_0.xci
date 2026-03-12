@@ -479,7 +479,7 @@
         "PCW_ENET_RESET_ENABLE": [ { "value": "1", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
         "PCW_ENET_RESET_SELECT": [ { "value": "Share reset pin", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
         "PCW_ENET0_RESET_ENABLE": [ { "value": "0", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
-        "PCW_ENET0_RESET_IO": [ { "value": "<Select>", "resolve_type": "user", "enabled": false, "usage": "all" } ],
+        "PCW_ENET0_RESET_IO": [ { "value": "<Select>", "resolve_type": "user", "usage": "all" } ],
         "PCW_ENET1_PERIPHERAL_ENABLE": [ { "value": "0", "resolve_type": "user", "usage": "all" } ],
         "PCW_ENET1_ENET1_IO": [ { "value": "<Select>", "resolve_type": "user", "enabled": false, "usage": "all" } ],
         "PCW_ENET1_GRP_MDIO_ENABLE": [ { "value": "0", "resolve_type": "user", "enabled": false, "usage": "all" } ],
@@ -1216,7 +1216,7 @@
           "abstraction_type": "xilinx.com:signal:clock_rtl:1.0",
           "mode": "master",
           "parameters": {
-            "FREQ_HZ": [ { "value": "100000000", "value_src": "user", "value_permission": "bd", "resolve_type": "generated", "format": "float", "usage": "all" } ],
+            "FREQ_HZ": [ { "value": "1e+08", "value_src": "user", "value_permission": "bd", "resolve_type": "generated", "format": "float", "usage": "all" } ],
             "FREQ_TOLERANCE_HZ": [ { "value": "0", "value_permission": "bd", "resolve_type": "generated", "format": "long", "is_ips_inferred": true, "is_static_object": false } ],
             "PHASE": [ { "value": "0.0", "value_permission": "bd", "resolve_type": "generated", "format": "float", "is_ips_inferred": true, "is_static_object": false } ],
             "CLK_DOMAIN": [ { "value": "design_1_processing_system7_0_0_FCLK_CLK0", "value_permission": "bd", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
@@ -1302,5 +1302,5 @@
       }
     }
   },
-  "checksum": "48422369"
+  "checksum": "443611d3"
 }

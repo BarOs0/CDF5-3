@@ -33,22 +33,22 @@ test = zeros(Int, test_size)
 # end
 
 # 0h0FFF
-test[1] = 2531
-test[2] = 2315
-test[3] = 3028
-test[4] = 4086
-test[5] = 453
-test[6] = 705
-test[7] = 2115
-test[8] = 2984
-test[9] = 3021
-test[10] = 1047
-test[11] = 2975
-test[12] = 3474
-test[13] = 1752
-test[14] = 994
-test[15] = 2362
-test[16] = 677
+# test[1] = 2531
+# test[2] = 2315
+# test[3] = 3028
+# test[4] = 4086
+# test[5] = 453
+# test[6] = 705
+# test[7] = 2115
+# test[8] = 2984
+# test[9] = 3021
+# test[10] = 1047
+# test[11] = 2975
+# test[12] = 3474
+# test[13] = 1752
+# test[14] = 994
+# test[15] = 2362
+# test[16] = 677
 
 # = 0h00FF
 # test[1] = 227
@@ -69,22 +69,22 @@ test[16] = 677
 # test[16] = 165
 
 # 0h000F
-# test[1] = 3
-# test[2] = 11
-# test[3] = 4
-# test[4] = 6
-# test[5] = 5
-# test[6] = 1
-# test[7] = 3
-# test[8] = 8
-# test[9] = 13
-# test[10] = 7
-# test[11] = 15
-# test[12] = 2
-# test[13] = 8
-# test[14] = 2
-# test[15] = 10
-# test[16] = 5
+test[1] = 3
+test[2] = 11
+test[3] = 4
+test[4] = 6
+test[5] = 5
+test[6] = 1
+test[7] = 3
+test[8] = 8
+test[9] = 13
+test[10] = 7
+test[11] = 15
+test[12] = 2
+test[13] = 8
+test[14] = 2
+test[15] = 10
+test[16] = 5
 
 odd = test[2:2:end]
 even = test[1:2:end]

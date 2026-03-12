@@ -26,20 +26,23 @@ module predict_and_update_tb(
     localparam DATA_LEN = 32;
     localparam X_LEN = 16;
     localparam NULL = 32'd0;
-    localparam RDM_RANGE = 32'h0FFF;
+    localparam RDM_RANGE = 32'h000F;
     
     reg clk;
     reg reset;
     reg signed [DATA_LEN-1:0] data_in;
     wire signed [DATA_LEN-1:0] update_approx;
+    
     wire update_done;
+    wire data_in_ready;
+    
+    wire last_predict;
+    wire last_update;
     
     reg signed [DATA_LEN-1:0] x [0:X_LEN-1];
     integer i;
     
     reg last_sample = 0;
-    
-    reg first_sample = 0;
     
     reg data_valid = 0;
     
@@ -48,10 +51,12 @@ module predict_and_update_tb(
         .reset(reset),
         .data_in(data_in),
         .last_sample(last_sample),
-        .first_sample(first_sample),
         .data_valid(data_valid),
         .update_approx(update_approx),
-        .update_done(update_done)
+        .update_done(update_done),
+        .data_in_ready(data_in_ready),
+        .last_update(last_update),
+        .last_predict(last_predict)
     );
     
     always #5 clk = ~clk;
@@ -72,15 +77,8 @@ module predict_and_update_tb(
 
         data_valid <= 1;
         for (i = 0; i < X_LEN; i = i + 1) begin
-            if(i == 0) begin
-                last_sample <= 0;
-                first_sample <= 1;
-            end else if (i == X_LEN - 1) begin
+            if (i == X_LEN - 1) begin
                 last_sample <= 1;
-                first_sample <= 0;
-            end else begin
-                last_sample <= 0;
-                first_sample <= 0;
             end
        
             data_in <= x[i];
@@ -88,7 +86,6 @@ module predict_and_update_tb(
         end
         
         last_sample <= 0;
-        first_sample <= 0;
         data_valid <= 0;
         @(posedge clk);
     end

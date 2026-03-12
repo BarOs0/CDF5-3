@@ -1,7 +1,7 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0x67B2F705BBC7A98F",
+      "boundary_crc": "0x67B2F705CE4AEE4F",
       "device": "xc7z010clg400-1",
       "gen_directory": "../../../../project_3.gen/sources_1/bd/design_1",
       "name": "design_1",
@@ -12,7 +12,7 @@
     "design_tree": {
       "processing_system7_0": "",
       "proc_sys_reset_0": "",
-      "predict_and_update_ip_0": ""
+      "wavelet_0": ""
     },
     "interface_ports": {
       "DDR": {
@@ -1111,39 +1111,13 @@
         "inst_hier_path": "proc_sys_reset_0",
         "has_run_ip_tcl": "true"
       },
-      "predict_and_update_ip_0": {
-        "vlnv": "user.org:user:predict_and_update_ip:1.0",
+      "wavelet_0": {
+        "vlnv": "user.org:user:wavelet:1.0",
         "ip_revision": "1",
-        "xci_name": "design_1_predict_and_update_ip_0_0",
-        "xci_path": "ip/design_1_predict_and_update_ip_0_0/design_1_predict_and_update_ip_0_0.xci",
-        "inst_hier_path": "predict_and_update_ip_0",
-        "has_run_ip_tcl": "true",
-        "interface_ports": {
-          "update_approx": {
-            "bd_attributes": {
-              "TYPE": {
-                "value": "END_POINT",
-                "value_src": "auto"
-              }
-            },
-            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
-            "mode": "Master",
-            "address_space_ref": "update_approx",
-            "base_address": {
-              "minimum": "0x00000000",
-              "maximum": "0xFFFFFFFF",
-              "width": "32"
-            }
-          }
-        },
-        "addressing": {
-          "address_spaces": {
-            "update_approx": {
-              "range": "4G",
-              "width": "32"
-            }
-          }
-        }
+        "xci_name": "design_1_wavelet_0_0",
+        "xci_path": "ip/design_1_wavelet_0_0/design_1_wavelet_0_0.xci",
+        "inst_hier_path": "wavelet_0",
+        "has_run_ip_tcl": "true"
       }
     },
     "interface_nets": {
