@@ -1,21 +1,3 @@
-function fft_radix2_dit_r(x::Vector)::Vector
-    N = length(x)
-    if N == 1
-        return x
-    end
-    p = x[1:2:N]
-    np = x[2:2:N]
-    P = fft_radix2_dit_r(p)
-    NP = fft_radix2_dit_r(np)
-    result = zeros(ComplexF64,N)
-    w = exp(1im*2*pi/N)
-    for k in 0:div(N,2)-1
-        result[k+1] = P[k+1] + w^(-k)*NP[k+1]
-        result[k+1+div(N,2)] = P[k+1] - w^(-k)*NP[k+1]
-    end
-    return result
-end
-
 function pad_to_pow2(x::Vector)::Vector
     N = length(x)
     N2 = 2^ceil(Int, log2(N))
@@ -26,7 +8,7 @@ function pad_to_pow2(x::Vector)::Vector
     end
 end
 
-function pad_to_pow2_2d(x::Matrix)::Matrix
+function pad_to_pow2_2d(x::Matrix{Int})::Matrix{Int}
     R, C = size(x)
     R2 = 2^ceil(Int, log2(R))
     C2 = 2^ceil(Int, log2(C))
@@ -34,17 +16,17 @@ function pad_to_pow2_2d(x::Matrix)::Matrix
     if (R == R2) && (C == C2)
         return x
     elseif (R == R2) && (C != C2)
-        return hcat(x, zeros(Float64, R, C2 - C))
+        return hcat(x, zeros(Int, R, C2 - C))
     elseif (R != R2) && (C == C2)
-        return vcat(x, zeros(Float64, R2 - R, C))
+        return vcat(x, zeros(Int, R2 - R, C))
     else
-        padding = zeros(Float64, R2, C2)
+        padding = zeros(Int, R2, C2)
         padding[1:R, 1:C] = x
         return padding
     end
 end
 
-function dwt(x::Vector)::Vector
+function dwt(x::Vector{Int})::Vector{Int}
 
     # === Slicing === 
     even = x[1:2:end] # approx
@@ -55,7 +37,7 @@ function dwt(x::Vector)::Vector
         if i == 1
             odd[i] -= even[i]
         elseif i <= length(even) - 1
-            odd[i] -= (even[i] + even[i+1]) / 2
+            odd[i] -= floor(Int, (even[i] + even[i+1]) / 2)
         else
             odd[i] -= even[i]
         end
@@ -64,11 +46,11 @@ function dwt(x::Vector)::Vector
     # === Update === 
     for i in 1:length(even)
         if i == 1
-            even[i] += odd[i] / 2
+            even[i] += floor(Int, odd[i] / 2)
         elseif i <= length(odd)
-            even[i] += (odd[i-1] + odd[i]) / 4
+            even[i] += floor(Int, (odd[i-1] + odd[i]) / 4)
         else
-            even[i] += odd[i-1] / 2  
+            even[i] += floor(Int, odd[i-1] / 2)  
         end
     end
 
@@ -76,7 +58,7 @@ function dwt(x::Vector)::Vector
     return X
 end
 
-function idwt(X::Vector)::Vector
+function idwt(X::Vector{Int})::Vector{Int}
 
     # === IDWT = DWT REVERSED ===
     N = Int(length(X) / 2)
@@ -86,11 +68,11 @@ function idwt(X::Vector)::Vector
     # === Undo update === 
     for i in 1:length(even)
         if i == 1
-            even[i] -= odd[i] / 2
+            even[i] -= floor(Int, odd[i] / 2)
         elseif i <= length(odd)
-            even[i] -= (odd[i-1] + odd[i]) / 4
+            even[i] -= floor(Int, (odd[i-1] + odd[i]) / 4)
         else
-            even[i] -= odd[i-1] / 2  
+            even[i] -= floor(Int, odd[i-1] / 2)  
         end
     end
 
@@ -99,20 +81,20 @@ function idwt(X::Vector)::Vector
         if i == 1
             odd[i] += even[i]
         elseif i <= length(even) - 1
-            odd[i] += (even[i] + even[i+1]) / 2
+            odd[i] += floor(Int, (even[i] + even[i+1]) / 2)
         else
             odd[i] += even[i]  
         end
     end
 
-    x = zeros(length(X))
+    x = zeros(Int, length(X))
     x[1:2:end] = even
     x[2:2:end] = odd
     return x
         
 end
 
-function lift(x::Matrix, levels::Integer)::Matrix
+function lift(x::Matrix{Int}, levels::Integer)::Matrix{Int}
 
     X = copy(x) # nastepne poziomy musza uzywac wczensniejszego X 
     rows, columns = size(X)

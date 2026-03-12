@@ -26,6 +26,8 @@ module predict_and_update_tb(
     localparam DATA_LEN = 16;
     localparam X_LEN = 16;
     localparam DUMMY_LEN = 1; // MCU must send 1 empty sample at the end
+    localparam NULL = 16'd0;
+    localparam RDM_RANGE = 16'h0FFF;
     
     reg clk;
     reg reset;
@@ -63,17 +65,17 @@ module predict_and_update_tb(
     initial begin
     
     for (i = 0; i < X_LEN; i = i + 1) begin
-        x[i] = $urandom & 16'h000F;
+        x[i] = $urandom & RDM_RANGE;
 //        x[i] <= i;
     end
         
     for (i = 0; i < DUMMY_LEN; i = i + 1) begin
-        dummy[i] = 16'd0; // empty dummy
+        dummy[i] = NULL; // empty dummy
     end
 
         clk = 0;
         reset = 1;
-        data_in = 16'd255;
+        data_in = NULL;
         
         #10 reset = 0;
         @(posedge clk);
@@ -112,12 +114,17 @@ module predict_and_update_tb(
         end
         
         for(i = 0; i < DUMMY_LEN; i = i + 1) begin
-            data_in <= dummy[i]; // sending dummy
+            data_in <= dummy[i]; // sending dummy - empty signal, end of the array symbol
+            first_odd <= 0;
+            last_odd <= 0;
+            first_even <= 0;
+            last_even <= 0;
             @(posedge clk);
         end
+        
         data_valid <= 0;
         
-        data_in <= 16'd255;
+        data_in <= NULL;
         repeat(3) @(posedge clk); 
     end
 endmodule
